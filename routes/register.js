@@ -15,6 +15,7 @@ module.exports = function (req,res,next) {
         if(users!=null) {
             res.render('index',{message:"User name existed!",register_page:"true"});
         } else {
+            console.log(req.body);
             var name = req.body.user;
             var email = req.body.email;
             //   var nowTime = new moment;
@@ -35,7 +36,7 @@ module.exports = function (req,res,next) {
                 res.end("Err!");
                 return;
             })
-            sendmail(email,"<a href='http://localhost:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
+            sendmail(email,"<a href='http://10.180.67.104:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
             res.end("msg sent");
         }
     });
