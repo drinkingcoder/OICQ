@@ -12,6 +12,7 @@ module.exports = function (req,res,next) {
             return;
         }
         console.log(doc);
+        console.log(req.body);
         users = doc;
         if(req.url!='/login') return next();
         if(users == null || req.body.password != users.password ) {
@@ -21,7 +22,7 @@ module.exports = function (req,res,next) {
         } else {
                 req.session.logged_in = true;
                 req.session.name = users.name;
-                res.end("Authenticated");
+                res.send("{msg:'success'}");
         }
     });
 }

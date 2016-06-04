@@ -33,11 +33,21 @@ module.exports = function (req,res,next) {
             });
             userentity.save( function(err) {
                 console.log(err);
-                res.end("Err!");
+                res.end("Add User Err!");
+                return;
+            });
+            var  groupentity = new db.group({
+                owner:name,
+                name:"My Friends",
+                member:name
+            });
+            groupentity.save( function (err) {
+                console.log(err);
+                res.end("Create Group Err!");
                 return;
             })
             sendmail(email,"<a href='http://10.180.67.104:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
-            res.end("msg sent");
+            res.send("{msg:'success'}");
         }
     });
 }

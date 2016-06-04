@@ -12,6 +12,96 @@
 	<!--[if IE]>
 		<script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
 	<![endif]-->
+	<script type="text/javascript" src="./jquery-1.12.1.js"></script>
+	<script type="text/javascript" src="./jquery.validate.js"></script>
+	<script tyoe="text/javascript" src="./md5.js"> </script>
+	<script type="text/javascript">
+		//alert("input[name='password']");
+		$(document).ready(function () {
+			$("#form_register").validate({
+				rules:{
+					user:{
+						required:true,
+						minlength:6
+					},
+					password:{
+						required:true,
+						minlength:6
+					},
+					confirmpassword:{
+						equalTo:"#password"
+					},
+					email:{
+						required:true,
+						email:true
+					}
+				},
+				submitHandler:function(form){
+					var user = $(form.user).val();
+					var password = hex_md5($(form.password).val());
+					var email = $(form.email).val();
+				//	window.location.href = window.location.href.replace('login','').replace('register','');
+					$.support.cors = true;
+					$.ajax({
+						url:'/register',
+						cache:false,
+						type:'POST',
+						data:{
+							email:email,
+							user:user,
+							password:password
+						},
+						error:function (a,b,c) {
+							alert("time out");
+						},
+						success:function(json) {
+							var data = eval('('+json+')');
+							if(data && data.msg == 'success') {
+								alert('Success!');
+								window.location.href = '/';
+							} else alert(data);
+						}
+					});
+				}
+			});
+			$("#form_login").validate({
+				rules: {
+					user: {
+						required: true,
+						minlength: 6
+					},
+					password: {
+						required: true,
+						minlength: 6
+					}
+				},
+				submitHandler: function (form) {
+					var user = $(form.user).val();
+					var password = hex_md5($(form.password).val());
+					$.ajax({
+						url:'/login',
+						cache:false,
+						type:'POST',
+						data:{
+							user:user,
+							password:password
+						},
+						error:function (a,b,c) {
+							alert("time out");
+						},
+						success:function(json) {
+							data = eval('('+json+')');
+							if (!(data && data.msg == 'success')) {
+								alart(data);
+							} else {
+								window.location.href = '/loginsuccess';
+							}
+						}
+					});
+				}
+			});
+		});
+	</script>
 </head>
 <body>
 	<div class="htmleaf-container">
@@ -24,16 +114,16 @@
 		</header>
 		<div class="login-wrap">
 			<div class="login-html">
-				<%if((typeof register_page) == "undefined") {%>
+				<%if((typeof register_page) == "undefined" || register_page == "false") {%>
 					<input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
 					<input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
 				<%} else {%>
-					<input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
-					<input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+					<input id="tab-1" type="radio" name="tab" class="sign-in"><label for="tab-1" class="tab">Sign In</label>
+					<input id="tab-2" type="radio" name="tab" class="sign-up" checked><label for="tab-2" class="tab">Sign Up</label>
 				<%}%>
 				<div class="login-form">
 					<div class="sign-in-htm">
-						<form action="/login" method="POST" >
+						<form id="form_login" action="/login" method="POST" >
 							<div class="group">
 								<label for="user" class="label">Username</label>
 								<input id="user" type="text" class="input" name="user">
@@ -61,18 +151,18 @@
 						</form>
 					</div>
 					<div class="sign-up-htm">
-						<form action="/register" method="POST">
+						<form id="form_register" method="POST" action="/register">
 							<div class="group">
 								<label for="user" class="label">Username</label>
 								<input id="user" type="text" class="input" name="user">
 							</div>
 							<div class="group">
 								<label for="pass" class="label">Password</label>
-								<input id="pass" type="password" class="input" data-type="password" name="password">
+								<input id="password" type="password" class="input" data-type="password" name="password">
 							</div>
 							<div class="group">
 								<label for="pass" class="label">Repeat Password</label>
-								<input id="pass" type="password" class="input" data-type="password">
+								<input id="pass" type="password" class="input" data-type="password" name="confirmpassword">
 							</div>
 							<div class="group">
 								<label for="pass" class="label">Email Address</label>

@@ -16,7 +16,7 @@ var messageschema = new schema({
     content:String
 });
 var groupschema = new schema({
-    owener:String,
+    owner:String,
     name:String,
     member:String
 });
