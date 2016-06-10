@@ -2,7 +2,8 @@
  * Created by drinkingcoder on 16/6/3.
  */
 var db = require("./db");
-
+var express = require('express');
+var router = express.Router();
 
 module.exports = function (req,res,next) {
     var users;
@@ -16,9 +17,9 @@ module.exports = function (req,res,next) {
         users = doc;
         if(req.url!='/login') return next();
         if(users == null || req.body.password != users.password ) {
-            res.render('index',{message:"Wrong password!", login_page:"true"});
+            res.send("{message:'User not exist or Wrong password!', login_page:'true'}");
         } else if(users.verified == 'false' ) {
-            res.render('index',{message:"Please veriy your identification first!", login_page:"true"})
+            res.send("{message:'Please veriy your identification first!', login_page:'true'}")
         } else {
                 req.session.logged_in = true;
                 req.session.name = users.name;

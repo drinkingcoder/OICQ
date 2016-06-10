@@ -5,10 +5,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser = require('body-parser');
+var sio = require('socket.io');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var activation = require('./routes/activation');
+//var chatview = require('./routes/chat');
 
 var app = express();
 
@@ -32,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/activation', activation);
+//app.use('/chat',chat);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -65,4 +68,5 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(3000);
+
 module.exports = app;

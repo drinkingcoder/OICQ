@@ -12,9 +12,9 @@
 	<!--[if IE]>
 		<script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
 	<![endif]-->
-	<script type="text/javascript" src="./jquery-1.12.1.js"></script>
-	<script type="text/javascript" src="./jquery.validate.js"></script>
-	<script tyoe="text/javascript" src="./md5.js"> </script>
+	<script type="text/javascript" src="javascripts/jquery-1.12.1.js"></script>
+	<script type="text/javascript" src="javascripts/jquery.validate.js"></script>
+	<script tyoe="text/javascript" src="javascripts/md5.js"> </script>
 	<script type="text/javascript">
 		//alert("input[name='password']");
 		$(document).ready(function () {
@@ -40,7 +40,6 @@
 					var user = $(form.user).val();
 					var password = hex_md5($(form.password).val());
 					var email = $(form.email).val();
-				//	window.location.href = window.location.href.replace('login','').replace('register','');
 					$.support.cors = true;
 					$.ajax({
 						url:'/register',
@@ -91,10 +90,10 @@
 						},
 						success:function(json) {
 							data = eval('('+json+')');
-							if (!(data && data.msg == 'success')) {
-								alart(data);
+							if( data.msg == 'success') {
+								window.location.href = '/chat';
 							} else {
-								window.location.href = '/loginsuccess';
+								$("#message").text(data.message);
 							}
 						}
 					});
@@ -143,11 +142,8 @@
 							<div class="foot-lnk">
 								<a href="#forgot">Forgot Password?</a>
 							</div>
-							<%if((typeof message) != "undefined") {%>
-								<div class="note">
-									<%=message%>
+								<div class="note" id="message">
 								</div>
-							<%}%>
 						</form>
 					</div>
 					<div class="sign-up-htm">
@@ -175,13 +171,9 @@
 							<div class="foot-lnk">
 								<label for="tab-1">Already Member?</label>
 							</div>
-							<%if((typeof message) != "undefined") {%>
-							<div class="note">
-								<%=message%>
+							<div class="note" id="message">
 							</div>
-							<%}%>
 						</form>
-
 					</div>
 				</div>
 			</div>

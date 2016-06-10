@@ -46,7 +46,7 @@ module.exports = function (req,res,next) {
                 res.end("Create Group Err!");
                 return;
             })
-            sendmail(email,"<a href='http://10.180.67.104:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
+            sendmail(email,"<a href='http://localhost:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
             res.send("{msg:'success'}");
         }
     });

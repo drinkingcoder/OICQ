@@ -11,6 +11,10 @@ router.get('/', function(req, res, next) {
 
 router.post('/login', login );
 router.post('/register', register);
-router.get('/loginsuccess', chat);
+router.get('/loginsuccess', function (req,res,next) {
+      res.redirect('/chat');
+    }
+);
+router.get('/chat',chat);
 
 module.exports = router;
