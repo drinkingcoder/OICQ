@@ -215,7 +215,7 @@
         var messages;
         for(var groupname in data.group){
             var thisgroup = $("<li></li>").append(
-                    $("<h3><span></span></h3>").text(groupname)
+                    $("<h3></h3>").append($("<span></span>").text(groupname))
             );
             var tmp = $('<ul></ul>');
             for(var friend in data.group[groupname]) {
