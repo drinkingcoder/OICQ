@@ -12,9 +12,9 @@ router.get('/', function(req, res, next) {
 router.post('/login', login );
 router.post('/register', register);
 router.get('/loginsuccess', function (req,res,next) {
-      res.redirect('/chat');
+      res.redirect('/chat/'+req.session.name);
     }
 );
-router.get('/chat',chat);
+router.get('/chat/:name?',chat);
 
 module.exports = router;

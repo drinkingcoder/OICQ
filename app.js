@@ -5,7 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var sio = require('socket.io');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -13,6 +12,48 @@ var activation = require('./routes/activation');
 //var chatview = require('./routes/chat');
 
 var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+var db = require("./routes/db");
+
+global.online = {};
+global.sockets = {};
+
+io.sockets.on("connection", function (socket) {
+  console.log('someone in!');
+  socket.on('applydata',function (name) {
+    global.sockets[name] = this;
+    var group = {};
+    var messages = {};
+    var data = {};
+    var online;
+    db.group.find({owner:name},function (err,docs) {
+      console.log(docs);
+      for(var i in docs) {
+        online = global.online[docs[i].member];
+        if((typeof  online)=="undefined") online = false;
+        else online = true;
+        var friend = {};
+        friend[docs[i].member] = {
+          'email':docs[i].email,
+          'online':online
+        };
+        console.log(friend);
+        group[docs[i].name] = friend;
+      }
+      data["group"] = group;
+      console.log(data);
+      data["messages"] = messages;
+      socket.emit('data',data);
+    });
+  });
+  socket.on('sendmessage',function (message) {
+    console.log(message);
+    socket.emit('message',message);
+    if((typeof global.sockets[message.sender]) == "undefined" || global.sockets[message.sender] == null) db.savemessage(message);
+    else global.sockets[message.sender].emit('message',message);
+  });
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -67,6 +108,6 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.listen(3000);
+server.listen(3000);
 
 module.exports = app;

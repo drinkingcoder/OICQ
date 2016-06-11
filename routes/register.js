@@ -22,13 +22,11 @@ module.exports = function (req,res,next) {
             var password = req.body.password;
             var verified = 'false';
             var verificationcode = uuid.v1();
-            var online = 'false';
             var userentity = new db.user({
                 name: name,
                 email: email,
                 password:password,
                 verificationCode:verificationcode,
-                online:online,
                 verified:verified
             });
             userentity.save( function(err) {
@@ -39,7 +37,8 @@ module.exports = function (req,res,next) {
             var  groupentity = new db.group({
                 owner:name,
                 name:"My Friends",
-                member:name
+                member:name,
+                email:email
             });
             groupentity.save( function (err) {
                 console.log(err);

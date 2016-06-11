@@ -19,5 +19,12 @@ module.exports = function (req,res,next){
         res.end("You'v not logged in!");
         return;
     }
+
+    if(req.url == "/chat")
+    {
+        res.redirect("/chat/"+req.session.name);
+        return;
+    }
+
     res.render('chatview');
 }

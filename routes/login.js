@@ -23,6 +23,7 @@ module.exports = function (req,res,next) {
         } else {
                 req.session.logged_in = true;
                 req.session.name = users.name;
+                global.online[users.name] = true;
                 res.send("{msg:'success'}");
         }
     });
