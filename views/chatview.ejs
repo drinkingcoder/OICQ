@@ -63,9 +63,14 @@
         socket.on('message',function (msg) {
             var img;
             var div;
-            var name = currentname;
-            if(msg.sender == myname) div = $("<div class='message right'></div>");
-            else  div = $("<div class='message'></div>");
+            var name;
+            if(msg.sender == myname) {
+                div = $("<div class='message right'></div>");
+                name = msg.receiver;
+            } else {
+                div = $("<div class='message'></div>");
+                name = msg.sender;
+            }
             img = $('<img src="/img/1_copy.jpg" />');
             var content = $('<div class="bubble"></div>').append(msg.content).append($(' <div class="corner"></div>'));
             var span = $('<span></span>').text(msg.timestamp);
@@ -73,6 +78,7 @@
             $('#chat-messages').append(div.append(img).append(content));
             $('#chat-messages').scrollTop(1000000);
             $('#sendmessage input').val('');
+            messages[msg.sender].push(msg);
         });
         socket.on('data',function (data) {
             messages = JSON.parse(JSON.stringify(data.messages));
@@ -101,115 +107,117 @@
                 }
                 thisgroup = thisgroup.append(tmp);
                 $('#menu').append(thisgroup);
+            }
 
-                $('#menu').lazeemenu();
+            $('#menu').lazeemenu();
 
-                var preloadbg = document.createElement('img');
-                preloadbg.src = '/img/timeline1.png';
-                $('#searchfield').focus(function () {
-                    if ($(this).val() == 'Search contacts...') {
-                        $(this).val('');
-                    }
-                });
-                $('#searchfield').focusout(function () {
-                    if ($(this).val() == '') {
-                        $(this).val('Search contacts...');
-                    }
-                });
-                $('#sendmessage input').focus(function () {
-                    if ($(this).val() == 'Send message...') {
-                        $(this).val('');
-                    }
-                });
-                $('#sendmessage input').focusout(function () {
-                    if ($(this).val() == '') {
-                        $(this).val('Send message...');
-                    }
-                });
-                $('#send').click(function () {
-                    if((typeof  messages[currentname]) == "undefined") messages[currentname] = [];
-                    var currentmessage =
-                    {
-                        'sender':myname,
-                        'receiver':currentname,
-                        'type':'send',
-                        'content':$('#sendmessage input').val(),
-                        'timestamp':(new Date()).getHours().toString()+':'+(new Date()).getMinutes().toString()+':'+(new Date()).getSeconds().toString()
-                    };
-                    socket.emit('sendmessage', currentmessage);
-                    messages[currentname].push(currentmessage);
-                });
-                $('.friend').each(function () {
-                    $(this).click(function () {
-                        var childOffset = $(this).offset();
-                        var parentOffset = $(this).parent().parent().offset();
-                        var childTop = childOffset.top - parentOffset.top;
-                        var clone = $(this).find('img').eq(0).clone();
-                        var top = childTop + 12 + 'px';
-                        var name = $(this).find('p strong').html();
-                        var email = $(this).find('p span').html();
-                        if(name != currentname) {
-                            currentname = name;
-                            for (var msg in messages[name]) {
-                                var img;
-                                var div;
-                                if (messages[name][msg].type == 'receive') {
-                                    div = $("<div class='message'></div>");
-                                    img = $('<img src="/img/2_copy.jpg" />');
-                                } else {
-                                    div = $("<div class='message right'></div>");
-                                    img = $('<img src="/img/1_copy.jpg" />');
-                                }
-                                var content = $('<div class="bubble"></div>').append(messages[name][msg].content).append($(' <div class="corner"></div>'));
-                                var span = $('<span></span>').text(messages[name][msg].timestamp);
-                                content = content.append(span);
-                                $('#chat-messages').append(div.append(img).append(content));
+            var preloadbg = document.createElement('img');
+            preloadbg.src = '/img/timeline1.png';
+            $('#searchfield').focus(function () {
+                if ($(this).val() == 'Search contacts...') {
+                    $(this).val('');
+                }
+            });
+            $('#searchfield').focusout(function () {
+                if ($(this).val() == '') {
+                    $(this).val('Search contacts...');
+                }
+            });
+            $('#sendmessage input').focus(function () {
+                if ($(this).val() == 'Send message...') {
+                    $(this).val('');
+                }
+            });
+            $('#sendmessage input').focusout(function () {
+                if ($(this).val() == '') {
+                    $(this).val('Send message...');
+                }
+            });
+            $('#send').click(function () {
+                alert('clicked!');
+                if((typeof  messages[currentname]) == "undefined") messages[currentname] = [];
+                var currentmessage =
+                {
+                    'sender':myname,
+                    'receiver':currentname,
+                    'type':'send',
+                    'content':$('#sendmessage input').val(),
+                    'timestamp':(new Date()).getHours().toString()+':'+(new Date()).getMinutes().toString()+':'+(new Date()).getSeconds().toString()
+                };
+                socket.emit('sendmessage', currentmessage);
+                messages[currentmessage.receiver].push(currentmessage);
+            });
+            $('.friend').each(function () {
+                $(this).click(function () {
+                    var childOffset = $(this).offset();
+                    var parentOffset = $(this).parent().parent().offset();
+                    var childTop = childOffset.top - parentOffset.top;
+                    var clone = $(this).find('img').eq(0).clone();
+                    var top = childTop + 12 + 'px';
+                    var name = $(this).find('p strong').html();
+                    var email = $(this).find('p span').html();
+                    if(name != currentname) {
+                        $('#chat-messages').children('div').remove();
+                        currentname = name;
+                        for (var msg in messages[name]) {
+                            var img;
+                            var div;
+                            if (messages[name][msg].receiver == myname) {
+                                div = $("<div class='message'></div>");
+                                img = $('<img src="/img/2_copy.jpg" />');
+                            } else {
+                                div = $("<div class='message right'></div>");
+                                img = $('<img src="/img/1_copy.jpg" />');
                             }
+                            var content = $('<div class="bubble"></div>').append(messages[name][msg].content).append($(' <div class="corner"></div>'));
+                            var span = $('<span></span>').text(messages[name][msg].timestamp);
+                            content = content.append(span);
+                            $('#chat-messages').append(div.append(img).append(content));
                         }
-                        $(clone).css({ 'top': top }).addClass('floatingImg').appendTo('#chatbox');
+                    }
+                    $(clone).css({ 'top': top }).addClass('floatingImg').appendTo('#chatbox');
+                    setTimeout(function () {
+                        $('#profile p').addClass('animate');
+                        $('#profile').addClass('animate');
+                    }, 100);
+                    setTimeout(function () {
+                        $('#chat-messages').addClass('animate');
+                        $('.cx, .cy').addClass('s1');
                         setTimeout(function () {
-                            $('#profile p').addClass('animate');
-                            $('#profile').addClass('animate');
+                            $('.cx, .cy').addClass('s2');
                         }, 100);
                         setTimeout(function () {
-                            $('#chat-messages').addClass('animate');
-                            $('.cx, .cy').addClass('s1');
-                            setTimeout(function () {
-                                $('.cx, .cy').addClass('s2');
-                            }, 100);
-                            setTimeout(function () {
-                                $('.cx, .cy').addClass('s3');
-                            }, 200);
-                        }, 150);
-                        $('.floatingImg').animate({
-                            'width': '68px',
-                            'left': '108px',
-                            'top': '20px'
+                            $('.cx, .cy').addClass('s3');
                         }, 200);
+                    }, 150);
+                    $('.floatingImg').animate({
+                        'width': '68px',
+                        'left': '108px',
+                        'top': '20px'
+                    }, 200);
 
-                        $('#profile p').html(name);
-                        $('#profile span').html(email);
-                        $('.message').not('.right').find('img').attr('src', $(clone).attr('src'));
-                        $('#friendslist').fadeOut();
-                        $('#chatview').fadeIn();
-                        $('#close').unbind('click').click(function () {
-                            $('#chat-messages, #profile, #profile p').removeClass('animate');
-                            $('.cx, .cy').removeClass('s1 s2 s3');
-                            $('.floatingImg').animate({
-                                'width': '40px',
-                                'top': top,
-                                'left': '12px'
-                            }, 200, function () {
-                                $('.floatingImg').remove();
-                            });
-                            setTimeout(function () {
-                                $('#chatview').fadeOut();
-                                $('#friendslist').fadeIn();
-                            }, 50);
+                    $('#profile p').html(name);
+                    $('#profile span').html(email);
+                    $('.message').not('.right').find('img').attr('src', $(clone).attr('src'));
+                    $('#friendslist').fadeOut();
+                    $('#chatview').fadeIn();
+                    $('#close').unbind('click').click(function () {
+                        $('#chat-messages, #profile, #profile p').removeClass('animate');
+                        $('.cx, .cy').removeClass('s1 s2 s3');
+                        $('.floatingImg').animate({
+                            'width': '40px',
+                            'top': top,
+                            'left': '12px'
+                        }, 200, function () {
+                            $('.floatingImg').remove();
                         });
+                        setTimeout(function () {
+                            $('#chatview').fadeOut();
+                            $('#friendslist').fadeIn();
+                        }, 50);
                     });
                 });
-            }
+            });
         });
 
     });

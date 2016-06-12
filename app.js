@@ -41,17 +41,38 @@ io.sockets.on("connection", function (socket) {
         console.log(friend);
         group[docs[i].name] = friend;
       }
-      data["group"] = group;
-      console.log(data);
-      data["messages"] = messages;
-      socket.emit('data',data);
+      db.message.find({receiver:name},function (err,docs) {
+        for(var i in docs) {
+          if((typeof messages[docs[i].sender]) == "undefined") messages[docs[i].sender] = [];
+          messages[docs[i].sender].push({
+            'sender': docs[i].sender,
+            'receiver': docs[i].receiver,
+            'content': docs[i].content,
+            'timestamp': docs[i].timestamp
+          });
+        }
+        db.message.find({sender:name},function (err,docs) {
+          for (var i in docs) {
+            if((typeof messages[docs[i].receiver]) == "undefined") messages[docs[i].receiver] = [];
+            messages[docs[i].receiver].push({
+              'sender': docs[i].sender,
+              'receiver': docs[i].receiver,
+              'content': docs[i].content,
+              'timestamp': docs[i].timestamp
+            });
+          }
+          data["group"] = group;
+          data["messages"] = messages;
+          socket.emit('data',data);
+        });
+      });
     });
   });
   socket.on('sendmessage',function (message) {
     console.log(message);
     socket.emit('message',message);
-    if((typeof global.sockets[message.sender]) == "undefined" || global.sockets[message.sender] == null) db.savemessage(message);
-    else global.sockets[message.sender].emit('message',message);
+    if((typeof global.sockets[message.receiver]) == "undefined" || global.sockets[message.receiver] == null) db.savemessage(message);
+    else global.sockets[message.receiver].emit('message',message);
   });
 });
 
