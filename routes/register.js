@@ -45,7 +45,7 @@ module.exports = function (req,res,next) {
                 res.end("Create Group Err!");
                 return;
             })
-            sendmail(email,"<a href='http://drinkingcoder.com:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
+            sendmail(email,"<a href='http://drinkingcoder.com:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>Activate</a>");
             res.send("{msg:'success'}");
         }
     });

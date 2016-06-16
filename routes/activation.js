@@ -6,13 +6,14 @@ router.get('/', function (req,res,next){
     var name = req.query.name;
     var verificationcode = req.query.verificationcode;
     var user = db.user;
+    console.log(req.query);
     user.findOne({name:name},function (err,docs) {
         if(err) {
             console.log(err);
             res.end('ActivationErr!');
             return;
         }
-        console.log(docs.verificationCode);
+        console.log(docs);
         if(verificationcode == docs.verificationCode) {
             var condition = {name:name};
             var update = {$set: {verified:'true'}};
