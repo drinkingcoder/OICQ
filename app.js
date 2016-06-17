@@ -41,6 +41,7 @@ io.sockets.on("connection", function (socket) {
     db.group.find({owner:name},function (err,docs) {
       console.log(docs);
       for(var i in docs) {
+        if(typeof group[docs[i].name] == "undefined") group[docs[i].name] = {};
         online = global.online[docs[i].member];
         if((typeof  online)=="undefined") online = false;
         else online = true;
@@ -50,7 +51,10 @@ io.sockets.on("connection", function (socket) {
           'online':online
         };
         console.log(friend);
-        group[docs[i].name] = friend;
+        group[docs[i].name][docs[i].member] = {
+          'email':docs[i].email,
+          'online':online
+        };
       }
       db.message.find({receiver:name},function (err,docs) {
         for(var i in docs) {

@@ -181,6 +181,7 @@
         socket.on('data',function (data) {
             messages = JSON.parse(JSON.stringify(data.messages));
             groups = JSON.parse(JSON.stringify(data.group));
+            console.log(groups);
             for(var i in data.request) {
                 SolveRequest(data.request[i]);
             }
