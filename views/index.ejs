@@ -58,7 +58,9 @@
 							if(data && data.msg == 'success') {
 								alert('Success!');
 								window.location.href = '/';
-							} else alert(data);
+							} else {
+								$("#message").text(data.message);
+							}
 						}
 					});
 				}
