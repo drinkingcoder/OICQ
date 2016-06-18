@@ -27,18 +27,20 @@
             }
         }
         function  Search() {
-            var request =
-            {
-                sender:myname,
-                receiver:$('#search input').val(),
-                groupname:"My Friend"
-            };
-            request.groupname = prompt("Group Name:","");
-            socket.emit('friendrequest',request);
+
         }
         function CheckSearchKey(event) {
             if(event.keyCode == 13) {
-                Search();
+                var request =
+                {
+                    sender:myname,
+                    receiver:$('#search input').val(),
+                    groupname:"My Friend"
+                };
+                if(confirm("Add Friend:"+request.receiver+"?")) {
+                    request.groupname = prompt("Group Name:", "");
+                    socket.emit('friendrequest', request);
+                }
             }
         }
         function SolveRequest(request) {
