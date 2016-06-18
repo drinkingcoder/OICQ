@@ -144,8 +144,6 @@ io.sockets.on("connection", function (socket) {
   socket.on('friendresponse',function (response) {
     console.log("response:");
     console.log(response);
-    if((typeof global.sockets[response.receiver]) == "undefined" || global.sockets[response.receiver] == null) db.saveresponse(response);
-    else global.sockets[response.receiver].emit('friendresponse',response);
     if(response.res == "accept") {
       db.user.findOne({name:response.receiver}, function (err,doc) {
         if(err!=null) {
@@ -174,6 +172,8 @@ io.sockets.on("connection", function (socket) {
         });
       });
     }
+    if((typeof global.sockets[response.receiver]) == "undefined" || global.sockets[response.receiver] == null) db.saveresponse(response);
+    else global.sockets[response.receiver].emit('friendresponse',response);
   }); 
 });
 

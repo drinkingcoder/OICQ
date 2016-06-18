@@ -55,11 +55,11 @@
 						},
 						success:function(json) {
 							var data = eval('('+json+')');
-							if(data && data.msg == 'success') {
+							if(data.msg == 'success') {
 								alert('Success!');
 								window.location.href = '/';
 							} else {
-								$("#message").text(data.message);
+								$("#smessage").text(data.message);
 							}
 						}
 					});
@@ -169,7 +169,7 @@
 							<div class="foot-lnk">
 								<label for="tab-1">Already Member?</label>
 							</div>
-							<div class="note" id="message">
+							<div class="note" id="smessage">
 							</div>
 						</form>
 					</div>

@@ -13,7 +13,7 @@ module.exports = function (req,res,next) {
         }
         users = doc;
         if(users!=null) {
-            res.render('index',{message:"User name existed!",register_page:"true"});
+            res.send('{message:"User name existed!",register_page:"true"}');
         } else {
             console.log(req.body);
             var name = req.body.user;
