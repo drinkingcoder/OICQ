@@ -57,6 +57,8 @@ io.sockets.on("connection", function (socket) {
         };
       }
       db.message.find({receiver:name},function (err,docs) {
+        db.message.remove({receiver:name},function(err) {
+        });
         for(var i in docs) {
           if((typeof messages[docs[i].sender]) == "undefined") messages[docs[i].sender] = [];
           messages[docs[i].sender].push({
